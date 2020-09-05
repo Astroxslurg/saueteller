@@ -1,6 +1,7 @@
 <template>
   <div style="height: 100vh; width: 100vw">
     <l-map
+      ref="map"
       :zoom="zoom"
       :center="center"
       :options="mapOptions"
@@ -12,13 +13,13 @@
         :attribution="attribution"
         :options="{useCache: true}"
         @ready="whenReady"
-      />
+      /> 
     </l-map>
   </div>
 </template>
 
 <script>
-import { latLng, latLngBounds } from "leaflet";
+import { latLng, latLngBounds, polyline } from "leaflet";
 import { LMap, LTileLayer } from "vue2-leaflet";
 
 export default {
@@ -41,11 +42,42 @@ export default {
         zoomSnap: 0.5
       },
       tileLayerObject: undefined,
+      map: undefined,
+      polylineLayer: undefined,
+      visitedPositions: [],
     };
   },
   methods: {
     whenReady(tileLayerObject) {
       this.tileLayerObject = tileLayerObject;
+      this.map = this.$refs.map.mapObject;
+
+      console.log("in Leaflet - whenReady");
+
+      const onPosition = (position) => {
+        const pos = [position.coords.latitude, position.coords.longitude]
+        this.map.flyTo(new latLng(...pos), this.currentZoom);
+        this.visitedPositions.push(pos)
+        return pos;
+      }
+
+      const onNewPosition = (position) => {
+        onPosition(position);
+        this.polylineLayer.setLatLngs(this.visitedPositions);
+      }
+      // onError Callback receives a PositionError object
+      function onError(error) {
+        alert('code: '    + error.code    + '\n' +
+              'message: ' + error.message + '\n');
+      }
+
+      const onFirstPosition = (position) => {
+        onPosition(position);
+        this.polylineLayer = polyline(this.visitedPositions, {color: 'blue'}).addTo(this.map);
+        navigator.geolocation.watchPosition(onNewPosition, onError);
+      }
+
+      navigator.geolocation.getCurrentPosition(onFirstPosition, onError)
     },
     seedArea(x1, y1, x2, y2, zoomMin, zoomMax) {
       let corner1 = latLng(x1, y1);
