@@ -1,10 +1,9 @@
 <template>
-  <div style="height: 500px; width: 100%">
+  <div style="height: 100vh; width: 100vw">
     <l-map
       :zoom="zoom"
       :center="center"
       :options="mapOptions"
-      style="height: 80%"
       @update:center="centerUpdate"
       @update:zoom="zoomUpdate"
     >
@@ -46,12 +45,13 @@ export default {
   },
   methods: {
     whenReady(tileLayerObject) {
-        this.tileLayerObject = tileLayerObject;
-        let corner1 = latLng(69.5, 19.0);
-        let corner2 = latLng(70.0, 19.5)
-        let bounds = latLngBounds(corner1, corner2);
-        this.tileLayerObject.seed(bounds, 8, 12);
-        // console.log(bounds)
+      this.tileLayerObject = tileLayerObject;
+    },
+    seedArea(x1, y1, x2, y2, zoomMin, zoomMax) {
+      let corner1 = latLng(x1, y1);
+      let corner2 = latLng(x2, y2);
+      let bounds = latLngBounds(corner1, corner2);
+      this.tileLayerObject.seed(bounds, zoomMin, zoomMax);
     },
     zoomUpdate(zoom) {
       this.currentZoom = zoom;
