@@ -45,12 +45,19 @@ export default {
       map: undefined,
       polylineLayer: undefined,
       visitedPositions: [],
+      clickedLocation: latLng(0,0),
     };
   },
   methods: {
     whenReady(tileLayerObject) {
       this.tileLayerObject = tileLayerObject;
       this.map = this.$refs.map.mapObject;
+
+      this.map.on('click', event => {
+        this.clickedLocation = event.latlng;
+        console.log(`Clicked at ${this.clickedLocation.toString()} `);
+        this.map.flyTo(event.latlng, this.currentZoom);
+      })
 
       console.log("in Leaflet - whenReady");
 
