@@ -1,18 +1,12 @@
 <template>
   <div id="app">
-    <Leaflet />
+    <div id="nav">
+      <router-link to="/">Kart</router-link> |
+      <router-link to="/register">Registrer</router-link>
+    </div>
+    <router-view/>
   </div>
 </template>
-
-<script>
-import Leaflet from './components/Leaflet'
-export default {
-  name: 'App',
-  components: {
-    Leaflet,
-  },
-}
-</script>
 
 <style>
 #app {
@@ -23,7 +17,16 @@ export default {
   color: #2c3e50;
 }
 
-body {
-  margin: 0px;
+#nav {
+  padding: 30px;
+}
+
+#nav a {
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+#nav a.router-link-exact-active {
+  color: #42b983;
 }
 </style>
