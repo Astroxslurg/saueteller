@@ -49,42 +49,38 @@ export default {
     };
   },
   methods: {
+    onMapTap(mouseEvent) {
+      this.clickedLocation = mouseEvent.latlng;
+      console.log(`Clicked at ${this.clickedLocation.toString()} `);
+      // this.map.flyTo(mouseEvent.latlng, this.currentZoom);
+      this.$router.push('register')
+    },
     whenReady(tileLayerObject) {
       this.tileLayerObject = tileLayerObject;
       this.map = this.$refs.map.mapObject;
 
-      this.map.on('click', event => {
-        this.clickedLocation = event.latlng;
-        console.log(`Clicked at ${this.clickedLocation.toString()} `);
-        this.map.flyTo(event.latlng, this.currentZoom);
-      })
+      this.map.on('click', this.onMapTap);
 
-      console.log("in Leaflet - whenReady");
-
-      const onPosition = (position) => {
-        const pos = [position.coords.latitude, position.coords.longitude]
-        this.map.flyTo(new latLng(...pos), this.currentZoom);
-        this.visitedPositions.push(pos)
-        return pos;
-      }
-
-      const onNewPosition = (position) => {
-        onPosition(position);
-        this.polylineLayer.setLatLngs(this.visitedPositions);
-      }
-      // onError Callback receives a PositionError object
-      function onError(error) {
-        alert('code: '    + error.code    + '\n' +
-              'message: ' + error.message + '\n');
-      }
-
-      const onFirstPosition = (position) => {
-        onPosition(position);
-        this.polylineLayer = polyline(this.visitedPositions, {color: 'blue'}).addTo(this.map);
-        navigator.geolocation.watchPosition(onNewPosition, onError);
-      }
-
-      navigator.geolocation.getCurrentPosition(onFirstPosition, onError)
+      navigator.geolocation.getCurrentPosition(this.onFirstPosition, this.onPositionError);
+    },
+    onPositionError(error) {
+      alert('code: '    + error.code    + '\n' +
+            'message: ' + error.message + '\n');
+    },
+    onPosition(position) {
+      const pos = [position.coords.latitude, position.coords.longitude]
+      this.map.flyTo(new latLng(...pos), this.currentZoom);
+      this.visitedPositions.push(pos)
+      return pos;
+    },
+    onNewPosition(position) {
+      this.onPosition(position);
+      this.polylineLayer.setLatLngs(this.visitedPositions);
+    },
+    onFirstPosition(position) {
+      this.onPosition(position);
+      this.polylineLayer = polyline(this.visitedPositions, {color: 'blue'}).addTo(this.map);
+      navigator.geolocation.watchPosition(this.onNewPosition, this.onPositionError);
     },
     seedArea(x1, y1, x2, y2, zoomMin, zoomMax) {
       let corner1 = latLng(x1, y1);
