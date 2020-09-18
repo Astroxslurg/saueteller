@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import { latLng, latLngBounds, polyline } from "leaflet";
+import { latLng, latLngBounds, polyline, circle } from "leaflet";
 import { LMap, LTileLayer } from "vue2-leaflet";
 
 export default {
@@ -45,18 +45,26 @@ export default {
       map: undefined,
       polylineLayer: undefined,
       visitedPositions: [],
-      clickedLocation: latLng(0,0),
+      registerLocation: latLng(0,0),
+      registerLocationCircle: undefined,
     };
   },
   methods: {
     onMapTap(mouseEvent) {
-      this.clickedLocation = mouseEvent.latlng;
-      console.log(`Clicked at ${this.clickedLocation.toString()} `);
-      // this.map.flyTo(mouseEvent.latlng, this.currentZoom);
-      this.$router.push('register')
+      this.registerLocation = mouseEvent.latlng;
+      console.log(`Clicked at ${this.registerLocation.toString()} `);
+      if (this.registerLocationCircle) {
+        this.registerLocationCircle.setLatLng(this.registerLocation);
+      } else {
+        this.registerLocationCircle = circle(this.registerLocation, {radius: 150, color: 'blue'}).addTo(this.map);
+      }
+      window.setTimeout(() => {
+        this.$router.push('register')
+      }, 350);
     },
     deviceReady() {
       console.log("Device is ready!");
+      navigator.geolocation.getCurrentPosition(this.onFirstPosition, this.onPositionError);
     },
     whenReady(tileLayerObject) {
       this.tileLayerObject = tileLayerObject;
@@ -65,7 +73,6 @@ export default {
       this.map.on('click', this.onMapTap);
 
       document.addEventListener('deviceready', this.deviceReady, false);
-      // navigator.geolocation.getCurrentPosition(this.onFirstPosition, this.onPositionError);
     },
     onPositionError(error) {
       alert('code: '    + error.code    + '\n' +
