@@ -5,8 +5,8 @@
       :zoom="zoom"
       :center="center"
       :options="mapOptions"
-      @update:center="centerUpdate"
-      @update:zoom="zoomUpdate"
+      @update:center="setCenter"
+      @update:zoom="setZoom"
     >
       <l-tile-layer
         :url="url"
@@ -19,24 +19,21 @@
 </template>
 
 <script>
-import { latLng, latLngBounds, polyline, circle } from "leaflet";
-import { LMap, LTileLayer } from "vue2-leaflet";
+import { latLng, latLngBounds, polyline, circle } from 'leaflet';
+import { LMap, LTileLayer } from 'vue2-leaflet';
+import { mapMutations, mapState } from 'vuex';
 
 export default {
-  name: "Leaflet",
+  name: 'Leaflet',
   components: {
     LMap,
     LTileLayer,
   },
   data() {
     return {
-      zoom: 11,
-      center: latLng(60.14, 10.25),
       url: 'https://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo4&zoom={z}&x={x}&y={y}',
       attribution:
         '<a href="http://www.kartverket.no/">Kartverket</a>',
-      currentZoom: 11.5,
-      currentCenter: latLng(60.14, 10.25),
       showParagraph: false,
       mapOptions: {
         zoomSnap: 0.5
@@ -44,14 +41,16 @@ export default {
       tileLayerObject: undefined,
       map: undefined,
       polylineLayer: undefined,
-      visitedPositions: [],
-      registerLocation: latLng(0,0),
       registerLocationCircle: undefined,
     };
   },
+  computed: {
+    ...mapState(['zoom', 'center', 'visitedPositions', 'registerLocation', 'firstLoad',]),
+  },
   methods: {
+    ...mapMutations(['setZoom', 'setCenter', 'addVisitedLocation', 'setRegisterLocation', 'hasLoaded']),
     onMapTap(mouseEvent) {
-      this.registerLocation = mouseEvent.latlng;
+      this.setRegisterLocation(mouseEvent.latlng);
       console.log(`Clicked at ${this.registerLocation.toString()} `);
       if (this.registerLocationCircle) {
         this.registerLocationCircle.setLatLng(this.registerLocation);
@@ -72,7 +71,20 @@ export default {
 
       this.map.on('click', this.onMapTap);
 
-      document.addEventListener('deviceready', this.deviceReady, false);
+      if (this.firstLoad) {
+        document.addEventListener('deviceready', this.deviceReady, false);
+        this.hasLoaded();
+      } else {
+        this.redrawFromState();
+      }
+    },
+    redrawFromState() {
+      if (this.registerLocation) {
+        this.registerLocationCircle = circle(this.registerLocation, {radius: 150, color: 'blue'}).addTo(this.map);
+      }
+      if (this.visitedPositions.length) {
+        this.polylineLayer = polyline(this.visitedPositions, {color: 'blue'}).addTo(this.map);
+      }
     },
     onPositionError(error) {
       alert('code: '    + error.code    + '\n' +
@@ -80,8 +92,8 @@ export default {
     },
     onPosition(position) {
       const pos = [position.coords.latitude, position.coords.longitude]
-      this.map.flyTo(new latLng(...pos), this.currentZoom);
-      this.visitedPositions.push(pos)
+      this.map.flyTo(new latLng(...pos), this.zoom);
+      this.addVisitedLocation(pos);
       return pos;
     },
     onNewPosition(position) {
@@ -98,12 +110,6 @@ export default {
       let corner2 = latLng(x2, y2);
       let bounds = latLngBounds(corner1, corner2);
       this.tileLayerObject.seed(bounds, zoomMin, zoomMax);
-    },
-    zoomUpdate(zoom) {
-      this.currentZoom = zoom;
-    },
-    centerUpdate(center) {
-      this.currentCenter = center;
     },
     showLongText() {
       this.showParagraph = !this.showParagraph;
