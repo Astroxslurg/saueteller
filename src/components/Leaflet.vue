@@ -55,13 +55,17 @@ export default {
       // this.map.flyTo(mouseEvent.latlng, this.currentZoom);
       this.$router.push('register')
     },
+    deviceReady() {
+      console.log("Device is ready!");
+    },
     whenReady(tileLayerObject) {
       this.tileLayerObject = tileLayerObject;
       this.map = this.$refs.map.mapObject;
 
       this.map.on('click', this.onMapTap);
 
-      navigator.geolocation.getCurrentPosition(this.onFirstPosition, this.onPositionError);
+      document.addEventListener('deviceready', this.deviceReady, false);
+      // navigator.geolocation.getCurrentPosition(this.onFirstPosition, this.onPositionError);
     },
     onPositionError(error) {
       alert('code: '    + error.code    + '\n' +
