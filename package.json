@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "start": "cross-env CORDOVA_PLATFORM=android vue-cli-service cordova-build-android && cd src-cordova && cordova run android",
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
