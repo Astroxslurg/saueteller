@@ -13,15 +13,17 @@
         :attribution="attribution"
         :options="{useCache: true}"
         @ready="whenReady"
-      /> 
+      />
     </l-map>
   </div>
 </template>
 
 <script>
-import { latLng, latLngBounds, polyline, circle } from 'leaflet';
+import {
+  latLng, latLngBounds, polyline, circle,
+} from 'leaflet';
 import { LMap, LTileLayer } from 'vue2-leaflet';
-import { createNamespacedHelpers } from 'vuex'
+import { createNamespacedHelpers } from 'vuex';
 
 const { mapState, mapMutations } = createNamespacedHelpers('map');
 
@@ -38,7 +40,7 @@ export default {
         '<a href="http://www.kartverket.no/">Kartverket</a>',
       showParagraph: false,
       mapOptions: {
-        zoomSnap: 0.5
+        zoomSnap: 0.5,
       },
       tileLayerObject: undefined,
       map: undefined,
@@ -47,7 +49,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(['zoom', 'center', 'visitedPositions', 'registerLocation', 'firstLoad',]),
+    ...mapState(['zoom', 'center', 'visitedPositions', 'registerLocation', 'firstLoad']),
   },
   methods: {
     ...mapMutations(['setZoom', 'setCenter', 'addVisitedLocation', 'setRegisterLocation', 'hasLoaded']),
@@ -56,13 +58,13 @@ export default {
       if (this.registerLocationCircle) {
         this.registerLocationCircle.setLatLng(this.registerLocation);
       } else {
-        this.registerLocationCircle = circle(this.registerLocation, {radius: 150, color: 'blue'}).addTo(this.map);
+        this.registerLocationCircle = circle(this.registerLocation, { radius: 150, color: 'blue' }).addTo(this.map);
       }
       window.setTimeout(() => {
         this.$router.push({
           name: 'register',
-          params: { registerLocation: mouseEvent.latlng }
-        })
+          params: { registerLocation: mouseEvent.latlng },
+        });
       }, 350);
     },
     deviceReady() {
@@ -83,18 +85,18 @@ export default {
     },
     redrawFromState() {
       if (this.registerLocation) {
-        this.registerLocationCircle = circle(this.registerLocation, {radius: 150, color: 'blue'}).addTo(this.map);
+        this.registerLocationCircle = circle(this.registerLocation, { radius: 150, color: 'blue' }).addTo(this.map);
       }
       if (this.visitedPositions.length) {
-        this.polylineLayer = polyline(this.visitedPositions, {color: 'blue'}).addTo(this.map);
+        this.polylineLayer = polyline(this.visitedPositions, { color: 'blue' }).addTo(this.map);
       }
     },
     onPositionError(error) {
-      alert('code: '    + error.code    + '\n' +
-            'message: ' + error.message + '\n');
+      alert(`code: ${error.code}\n`
+            + `message: ${error.message}\n`);
     },
     onPosition(position) {
-      const pos = [position.coords.latitude, position.coords.longitude]
+      const pos = [position.coords.latitude, position.coords.longitude];
       this.map.flyTo(new latLng(...pos), this.zoom);
       this.addVisitedLocation(pos);
       return pos;
@@ -105,18 +107,18 @@ export default {
     },
     onFirstPosition(position) {
       this.onPosition(position);
-      this.polylineLayer = polyline(this.visitedPositions, {color: 'blue'}).addTo(this.map);
+      this.polylineLayer = polyline(this.visitedPositions, { color: 'blue' }).addTo(this.map);
       navigator.geolocation.watchPosition(this.onNewPosition, this.onPositionError);
     },
     seedArea(x1, y1, x2, y2, zoomMin, zoomMax) {
-      let corner1 = latLng(x1, y1);
-      let corner2 = latLng(x2, y2);
-      let bounds = latLngBounds(corner1, corner2);
+      const corner1 = latLng(x1, y1);
+      const corner2 = latLng(x2, y2);
+      const bounds = latLngBounds(corner1, corner2);
       this.tileLayerObject.seed(bounds, zoomMin, zoomMax);
     },
     showLongText() {
       this.showParagraph = !this.showParagraph;
     },
-  }
+  },
 };
 </script>

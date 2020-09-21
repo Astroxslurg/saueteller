@@ -1,10 +1,10 @@
 module.exports = {
   publicPath: '',
   pluginOptions: {
-    cordovaPath: 'src-cordova'
+    cordovaPath: 'src-cordova',
   },
   transpileDependencies: [
-    'vuetify'
+    'vuetify',
   ],
   lintOnSave: 'warning',
 };

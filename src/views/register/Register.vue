@@ -26,9 +26,11 @@ export default {
     VBtn,
     Colors,
   },
-  data() { return {
-    sheeps: 0,
-  }},
+  data() {
+    return {
+      sheeps: 0,
+    };
+  },
   computed: {
     totalSheep: {
       get() {

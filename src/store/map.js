@@ -1,4 +1,4 @@
-import { latLng } from "leaflet";
+import { latLng } from 'leaflet';
 
 export default {
   namespaced: true,

@@ -27,7 +27,7 @@
       type="number"
       min="0">
     </v-text-field>
-  </div>    
+  </div>
 </template>
 
 <script>
@@ -40,24 +40,24 @@ export default {
   },
   computed: {
     white: {
-        get() { return this.$store.state.register.colors.white; },
-        set(count) { this.$store.commit('register/setColorCount', { color: 'white', count }); },
+      get() { return this.$store.state.register.colors.white; },
+      set(count) { this.$store.commit('register/setColorCount', { color: 'white', count }); },
     },
     black: {
-        get() { return this.$store.state.register.colors.black; },
-        set(count) { this.$store.commit('register/setColorCount', { color: 'black', count }); },
+      get() { return this.$store.state.register.colors.black; },
+      set(count) { this.$store.commit('register/setColorCount', { color: 'black', count }); },
     },
     brown: {
-        get() { return this.$store.state.register.colors.brown; },
-        set(count) { this.$store.commit('register/setColorCount', { color: 'brown', count }); },
+      get() { return this.$store.state.register.colors.brown; },
+      set(count) { this.$store.commit('register/setColorCount', { color: 'brown', count }); },
     },
     unspecified: {
-        get() { return this.$store.state.register.colors.unspecified; },
-        set(count) { this.$store.commit('register/setColorCount', { color: 'unspecified', count }); },
+      get() { return this.$store.state.register.colors.unspecified; },
+      set(count) { this.$store.commit('register/setColorCount', { color: 'unspecified', count }); },
     },
     notInSync: {
-        get() { return this.$store.state.register.colors.notInSync; },
-        set() { },
+      get() { return this.$store.state.register.colors.notInSync; },
+      set() { },
     },
   },
 };

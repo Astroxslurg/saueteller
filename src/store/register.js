@@ -2,12 +2,12 @@ import Vue from 'vue';
 
 const getters = {
   totalSheep(state) {
-    return Object.values(state.colors).reduce((acc, el) => (typeof el === 'number') ? acc + el : acc, 0);
+    return Object.values(state.colors).reduce((acc, el) => ((typeof el === 'number') ? acc + el : acc), 0);
   },
   getColors(state) {
     return { ...state.colors };
-  }
-}
+  },
+};
 
 export default {
   namespaced: true,
@@ -31,7 +31,7 @@ export default {
         state.colors.notInSync = false;
       }
     },
-    setColorCount(state, {color, count}) {
+    setColorCount(state, { color, count }) {
       if (count < 0) { return; }
       if (state.colors.unspecified < 0) {
         const diff = count - state.colors[color];
