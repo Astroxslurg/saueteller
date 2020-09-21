@@ -21,10 +21,12 @@
 <script>
 import { latLng, latLngBounds, polyline, circle } from 'leaflet';
 import { LMap, LTileLayer } from 'vue2-leaflet';
-import { mapMutations, mapState } from 'vuex';
+import { createNamespacedHelpers } from 'vuex'
+
+const { mapState, mapMutations } = createNamespacedHelpers('map');
 
 export default {
-  name: 'Leaflet',
+  name: 'Map',
   components: {
     LMap,
     LTileLayer,
@@ -51,18 +53,19 @@ export default {
     ...mapMutations(['setZoom', 'setCenter', 'addVisitedLocation', 'setRegisterLocation', 'hasLoaded']),
     onMapTap(mouseEvent) {
       this.setRegisterLocation(mouseEvent.latlng);
-      console.log(`Clicked at ${this.registerLocation.toString()} `);
       if (this.registerLocationCircle) {
         this.registerLocationCircle.setLatLng(this.registerLocation);
       } else {
         this.registerLocationCircle = circle(this.registerLocation, {radius: 150, color: 'blue'}).addTo(this.map);
       }
       window.setTimeout(() => {
-        this.$router.push('register')
+        this.$router.push({
+          name: 'register',
+          params: { registerLocation: mouseEvent.latlng }
+        })
       }, 350);
     },
     deviceReady() {
-      console.log("Device is ready!");
       navigator.geolocation.getCurrentPosition(this.onFirstPosition, this.onPositionError);
     },
     whenReady(tileLayerObject) {
