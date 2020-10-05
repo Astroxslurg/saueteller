@@ -1,21 +1,7 @@
 <template>
-  <div class="register">
-    <h1>Her kan du registrere sauer</h1>
-    <v-text-field
-      v-model.number="totalSheep"
-      label="Antall sauer"
-      type="number">
-    </v-text-field>
-
-    <Colors />
-
-    <v-btn @click="startLambRegistration">
-      Registrer lam
-    </v-btn>
-
-    <v-btn @click="changeLocation">
-      {{`${registerLocation ? 'Endre' : 'Velg'} lokasjon`}}
-    </v-btn>
+  <div class="lambs">
+    <h1>Her kan du registrere lam</h1>
+    <VBtn @click="click" >Registrer lam</VBtn>
   </div>
 </template>
 
@@ -26,13 +12,10 @@ import Colors from './Colors.vue';
 export default {
   name: 'Register',
   components: {
-    VTextField,
     VBtn,
-    Colors,
   },
   data() {
     return {
-      sheeps: 0,
     };
   },
   computed: {
@@ -57,20 +40,15 @@ export default {
     },
   },
   methods: {
-    startLambRegistration() {
-      this.$router.push({
-        path: '/register/lambs',
-      });
-    },
-    changeLocation() {
-      console.log(this.registerLocation);
+    click() {
+      alert('Du er lam!');
     },
   },
 };
 </script>
 
 <style lang="css" scoped>
-.register {
+.lambs {
   display: grid;
   column-gap: 20px;
   row-gap: 20px;

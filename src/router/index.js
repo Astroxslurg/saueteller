@@ -18,14 +18,14 @@ const routes = [
     component: Register,
   },
 
-  // {
-  //   path: '/register',
-  //   name: 'register',
-  //   // route level code-splitting
-  //   // this generates a separate chunk (register.[hash].js) for this route
-  //   // which is lazy-loaded when the route is visited.
-  //   component: () => import(/* webpackChunkName: "register" */ '../views/register/Register.vue')
-  // }
+  {
+    path: '/register/lambs',
+    name: 'registerLambs',
+    // route level code-splitting
+    // this generates a separate chunk (register.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "registerLambs" */ '../views/register/Lambs.vue'),
+  },
 ];
 
 const router = new VueRouter({

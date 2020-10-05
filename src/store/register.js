@@ -19,6 +19,7 @@ export default {
       unspecified: 0,
       notInSync: false,
     },
+    lambs: 0,
   },
 
   mutations: {
